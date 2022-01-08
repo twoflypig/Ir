@@ -1,0 +1,46 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "ir",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#letter"
+		},
+		{
+			"include": "#parameter"
+		}
+	],
+	"repository": {
+		"letter": {
+			"match": "\\s\\w+\\(",
+			"name": "keyword.letter"
+		  },
+		"parameter": {
+		"match": "para.*?\\)",
+		"name": "keyword.parameter"
+		}, 
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.ir",
+				"match": "\\b(if|while|for|return)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.ir",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.ir",
+					"match": "\\\\."
+				}
+			]
+		}
+	},
+	"scopeName": "source.ir"
+}

@@ -1,0 +1,25 @@
+{
+    "name": "ir",
+    "displayName": "IR",
+    "description": "ir",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.63.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "ir",
+            "aliases": ["ir", "ir"],
+            "extensions": [".ir"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "ir",
+            "scopeName": "source.ir",
+            "path": "./syntaxes/ir.tmLanguage.json"
+        }]
+    }
+}
