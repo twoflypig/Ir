@@ -9,20 +9,52 @@
 			"include": "#strings"
 		},
 		{
-			"include": "#letter"
+			"include": "#operator_name"
+		},
+		{
+			"include": "#operator_number"
+		},
+		{
+			"include": "#operator_fp"
 		},
 		{
 			"include": "#parameter"
+		},
+		{
+			"include": "#variable"
+		},
+		{
+			"include": "#operator"
+		},
+		{
+			"include": "#scope_name"
 		}
 	],
 	"repository": {
-		"letter": {
-			"match": "\\s\\w+\\(",
-			"name": "keyword.letter"
-		  },
+		"scope_name_gradient": {
+
+			"match": "Gradients.+-",
+			"name": "comment.line.gradident"
+		},
+		"operator_fp": {
+			"match": "(Float\\d+)|(Int\\d+)",
+			"name": "entity.name.type"
+		},
+		"operator_name": {
+			"match": "(=)\\s\\w+\\(",
+			"name": "entity.name.function"
+		},
+		"operator_number": {
+				"match": "op\\d+",
+				"name": "keyword.letter"
+		},
 		"parameter": {
-		"match": "para.*?\\)",
-		"name": "keyword.parameter"
+			"match": "(?<!^)%para.*?(\\))",
+			"name": "comment.line.number-sign"
+		}, 
+		"variable": {
+			"match": "%\\d+",
+			"name": "variable.parameter"
 		}, 
 		"keywords": {
 			"patterns": [{
