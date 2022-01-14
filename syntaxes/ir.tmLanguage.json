@@ -28,13 +28,15 @@
 		},
 		{
 			"include": "#scope_name"
+		},
+		{
+			"include": "#shape"
 		}
 	],
 	"repository": {
-		"scope_name_gradient": {
-
-			"match": "Gradients.+-",
-			"name": "comment.line.gradident"
+		"scope_name": {
+			"match": "\\(.*/.*-",
+			"name": "comment.line"
 		},
 		"operator_fp": {
 			"match": "(Float\\d+)|(Int\\d+)",
@@ -48,6 +50,10 @@
 				"match": "op\\d+",
 				"name": "keyword.letter"
 		},
+		"shape": {
+			"match": "\\[(\\d+,\\s){0,8}\\d+\\]",
+			"name": "constant.numeric"
+		}, 
 		"parameter": {
 			"match": "(?<!^)%para.*?(\\))",
 			"name": "comment.line.number-sign"
