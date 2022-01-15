@@ -1,14 +1,16 @@
 {
     "name": "ir",
-    "displayName": "IR",
-    "description": "ir",
+    "publisher": "DayDayUp",
+    "displayName": "IRColor",
+    "description": "IR files with color",
     "version": "0.0.1",
     "engines": {
-        "vscode": "^1.63.0"
+        "vscode": "^0.10.0"
     },
     "categories": [
         "Programming Languages"
     ],
+    "main": "out/extendion.js",
     "contributes": {
         "languages": [{
             "id": "ir",
