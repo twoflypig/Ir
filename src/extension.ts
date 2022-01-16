@@ -13,26 +13,26 @@ export function activate(context: vscode.ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand('ir.helloWorld', () => {
-    // The code you place here will be executed every time your command is executed
+  // let disposable = vscode.commands.registerCommand('ir.helloWorld', () => {
+  //   // The code you place here will be executed every time your command is executed
 
-    // Display a message box to the user
-    vscode.window.showInformationMessage('Hello World!');
-  });
+  //   // Display a message box to the user
+  //   vscode.window.showInformationMessage('Hello World!');
+  // });
 
-  context.subscriptions.push(disposable);
+  // context.subscriptions.push(disposable);
 
   context.subscriptions.push(
     vscode.languages.registerDefinitionProvider(["ir"], new GoDefinitionProvider()));
 }
 
-vscode.languages.registerHoverProvider('ir', {
-    provideHover(document, position, token) {
-      return {
-        contents: ['Hover Content']
-      };
-    }
-});
+// vscode.languages.registerHoverProvider('ir', {
+//     provideHover(document, position, token) {
+//       return {
+//         contents: ['Hover Content']
+//       };
+//     }
+// });
 
 
 class GoDefinitionProvider implements vscode.DefinitionProvider {
@@ -40,8 +40,35 @@ class GoDefinitionProvider implements vscode.DefinitionProvider {
         document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) 
         {
         console.log(position, token);
-        const json = document.getText();
-        return new vscode.Location(vscode.Uri.file(document.fileName), new vscode.Position(0, 0));
+        const word =  document.getText(document.getWordRangeAtPosition(position));
+        const txt =  document.getText();
+        console.log("Get word", word);
+        console.log('test:', /para\d+/.test(word));
+        if (/para\d+/.test(word)) {
+          const regexp2 = RegExp(`${word}`,'g');
+          let searced = [...txt.matchAll(regexp2)];
+          for (var i = 0; i < searced.length; i++ ){
+            console.log("matched 0", Number(searced[i].index));
+            let x = document.positionAt(Number(searced[i].index));
+            console.log(`Matching the word ${regexp2}, find position is ${x.line}`);
+            if (x.line !== position.line) {
+              console.log(`Matchine at ${x}`);
+              return new vscode.Location(vscode.Uri.file(document.fileName), x);
+            }
+          }
+        } else if ( /\d+/.test(word)) {
+          const regexp = RegExp(`%${word}\\(`,'g');
+          let searced = [...txt.matchAll(regexp)];
+          for (var i = 0; i < searced.length; i++ ){
+            console.log("matched 0", Number(searced[i].index));
+            let x = document.positionAt(Number(searced[i].index));
+            console.log(`Matching the word ${regexp}, find position is ${x.line}`);
+            if (x.line !== position.line) {
+              console.log(`Matchine at ${x}`);
+              return new vscode.Location(vscode.Uri.file(document.fileName), x);
+            }
+          }
+        }
     }
 }
 

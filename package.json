@@ -3,7 +3,8 @@
     "publisher": "DayDayUp",
     "displayName": "IRColor",
     "description": "IR files with color",
-    "version": "0.0.1",
+    "icon": "images/icon.png",
+    "version": "0.0.2",
     "engines": {
         "vscode": "^0.10.0"
     },
@@ -11,7 +12,7 @@
         "Programming Languages"
     ],
     "main": "./out/extension.js",
-    "activationEvents": ["onCommand:ir.helloWorld", "onLanguage:ir"],
+    "activationEvents": ["onLanguage:ir"],
     "contributes": {
         "languages": [{
             "id": "ir",
@@ -23,13 +24,7 @@
             "language": "ir",
             "scopeName": "source.ir",
             "path": "./syntaxes/ir.tmLanguage.json"
-        }],
-        "commands": [
-            {
-              "command": "ir.helloWorld",
-              "title": "Hello World"
-            }
-          ]
+        }]
     },
     "scripts": {
 		"vscode:prepublish": "npm run compile",

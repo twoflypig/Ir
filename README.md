@@ -8,6 +8,10 @@ This is the README for the extension "IRColor". Used for highlight some symbols 
 
 ![example](images/highlight_feature.png)
 
+2. Support name jumping like followings
+
+![example](images/ircolor.gif)
+
 ## Requirements
 
 No requirements
@@ -23,6 +27,10 @@ Calling out known issues can help limit users opening duplicate issues against y
 ## Release Notes
 
 Users appreciate release notes as you update your extension.
+
+### 0.0.2
+
+1. Support name jumping. Currently the parameters and the number.
 
 ### 0.0.1
 
