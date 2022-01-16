@@ -4,13 +4,15 @@ This is the README for the extension "IRColor". Used for highlight some symbols 
 
 ## Features
 
-1. Highlight the operator, scope name, shape and some key variables of the IR files. See below:
+1.Highlight the operator, scope name, shape and some key variables of the IR files. See below:
 
 ![example](images/highlight_feature.png)
 
-2. Support name jumping like followings
+2.Support name jumping like followings
 
 ![example](images/ircolor.gif)
+
+> Note: Currently the extesion is tested on the hwopt_end*.ir
 
 ## Requirements
 
