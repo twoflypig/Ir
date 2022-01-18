@@ -47,20 +47,15 @@ class GoDefinitionProvider implements vscode.DefinitionProvider {
         const txt =  document.getText();
         console.log("Get word", word);
         console.log('test:', /para\d+/.test(word));
+        var regexp;
+        // para13
         if (/para\d+/.test(word)) {
-          const regexp2 = RegExp(`${word}`,'g');
-          let searced = [...txt.matchAll(regexp2)];
-          for (var i = 0; i < searced.length; i++ ){
-            console.log("matched 0", Number(searced[i].index));
-            let x = document.positionAt(Number(searced[i].index));
-            console.log(`Matching the word ${regexp2}, find position is ${x.line}`);
-            if (x.line !== position.line) {
-              console.log(`Matchine at ${x}`);
-              return new vscode.Location(vscode.Uri.file(document.fileName), x);
-            }
-          }
-        } else if ( /\d+/.test(word)) {
-          const regexp = RegExp(`%${word}\\(`,'g');
+          regexp = RegExp(`${word}`,'g');
+        } else if (/\d+/.test(word)) {
+          regexp = RegExp(`%${word}\\(`,'g');
+        }
+
+        if (regexp){
           let searced = [...txt.matchAll(regexp)];
           for (var i = 0; i < searced.length; i++ ){
             console.log("matched 0", Number(searced[i].index));
@@ -84,21 +79,15 @@ class GoReferenceProvider implements vscode.ReferenceProvider {
         const word =  document.getText(document.getWordRangeAtPosition(position));
         const txt =  document.getText();
         console.log("Get word", word);
-        console.log('test:', /para\d+/.test(word));
+        var regexp;
         if (/para\d+/.test(word)) {
-          const regexp2 = RegExp(`${word}`,'g');
-          let searced = [...txt.matchAll(regexp2)];
-          for (var i = 0; i < searced.length; i++ ){
-            console.log("matched 0", Number(searced[i].index));
-            let x = document.positionAt(Number(searced[i].index));
-            console.log(`Matching the word ${regexp2}, find position is ${x.line}`);
-            if (x.line !== position.line) {
-              console.log(`Matchine at ${x}`);
-              list.push(new vscode.Location(vscode.Uri.file(document.fileName), x));
-            }
-          }
-        } else if ( /\d+/.test(word)) {
-          const regexp = RegExp(`%${word}\\D`,'g');
+          regexp = RegExp(`${word}`,'g');
+        } else if (/\d+/.test(word)) {
+          regexp = RegExp(`%${word}\\D`,'g');
+        } else if (/\%\d+/.test(word)) {
+          regexp = RegExp(`%${word}\\D`,'g');
+        }
+        if (regexp) {
           let searced = [...txt.matchAll(regexp)];
           for (var i = 0; i < searced.length; i++ ){
             console.log("matched 0", Number(searced[i].index));
