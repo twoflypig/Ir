@@ -14,9 +14,13 @@ This is the README for the extension "IRColor". Used for highlight some symbols 
 
 > Note: Currently the extesion is tested on the hwopt_end*.ir
 
+3.Support find reference of the operators, seached based on the number.
+
+![example](images/find_reference.gif)
+
 ## Requirements
 
-No requirements
+1. Recommend to use the Monokai Dimmed thema.
 
 ## Extension Settings
 
@@ -29,6 +33,10 @@ Calling out known issues can help limit users opening duplicate issues against y
 ## Release Notes
 
 Users appreciate release notes as you update your extension.
+
+### 0.0.3
+
+1. Support find the reference.
 
 ### 0.0.2
 

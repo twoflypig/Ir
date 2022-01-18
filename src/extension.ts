@@ -24,6 +24,9 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.languages.registerDefinitionProvider(["ir"], new GoDefinitionProvider()));
+  context.subscriptions.push(
+    vscode.languages.registerReferenceProvider(["ir"], new GoReferenceProvider()));
+    
 }
 
 // vscode.languages.registerHoverProvider('ir', {
@@ -70,6 +73,46 @@ class GoDefinitionProvider implements vscode.DefinitionProvider {
           }
         }
     }
+}
+
+class GoReferenceProvider implements vscode.ReferenceProvider {
+  public provideReferences(
+      document: vscode.TextDocument, position: vscode.Position,
+      options: { includeDeclaration: boolean }, token: vscode.CancellationToken) {
+        var list = [];
+        console.log("provied running:", position, token);
+        const word =  document.getText(document.getWordRangeAtPosition(position));
+        const txt =  document.getText();
+        console.log("Get word", word);
+        console.log('test:', /para\d+/.test(word));
+        if (/para\d+/.test(word)) {
+          const regexp2 = RegExp(`${word}`,'g');
+          let searced = [...txt.matchAll(regexp2)];
+          for (var i = 0; i < searced.length; i++ ){
+            console.log("matched 0", Number(searced[i].index));
+            let x = document.positionAt(Number(searced[i].index));
+            console.log(`Matching the word ${regexp2}, find position is ${x.line}`);
+            if (x.line !== position.line) {
+              console.log(`Matchine at ${x}`);
+              list.push(new vscode.Location(vscode.Uri.file(document.fileName), x));
+            }
+          }
+        } else if ( /\d+/.test(word)) {
+          const regexp = RegExp(`%${word}\\D`,'g');
+          let searced = [...txt.matchAll(regexp)];
+          for (var i = 0; i < searced.length; i++ ){
+            console.log("matched 0", Number(searced[i].index));
+            let x = document.positionAt(Number(searced[i].index));
+            console.log(`Matching the word ${regexp}, find position is ${x.line}`);
+            if (x.line !== position.line) {
+              console.log(`Matchine at ${x}`);
+              list.push(new vscode.Location(vscode.Uri.file(document.fileName), x));
+            }
+          }
+        }
+        console.log("Returned", list);
+        return list;
+  }
 }
 
 
