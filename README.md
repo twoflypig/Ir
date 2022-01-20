@@ -18,6 +18,10 @@ This is the README for the extension "IRColor". Used for highlight some symbols 
 
 ![example](images/find_reference.gif)
 
+4.Jump inner the graphs
+
+![example](images/jump_inner_graphs.gif)
+
 ## Requirements
 
 1. Recommend to use the Monokai Dimmed thema.
@@ -33,6 +37,10 @@ Calling out known issues can help limit users opening duplicate issues against y
 ## Release Notes
 
 Users appreciate release notes as you update your extension.
+
+### 0.0.4
+
+1. Support the jumping the code within the subkernel graph using %numbers(For example, %3) and parameters
 
 ### 0.0.3
 

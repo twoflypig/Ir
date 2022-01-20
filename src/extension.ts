@@ -39,33 +39,90 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 class GoDefinitionProvider implements vscode.DefinitionProvider {
+
+    needToSeach(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken){
+      // if the user click the %93 = xxx, so no need to search again
+      const curTxt = document.lineAt(position.line).text;
+      const word =  document.getText(document.getWordRangeAtPosition(position));
+      const referRegex = new RegExp(`\%${word}\\(`);
+      if (referRegex.test(curTxt)) {
+        return false;
+      }
+      return true;
+    }
+
+    searchParameters(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
+      var lastPosition;
+      console.log(position, token);
+      var range = document.getWordRangeAtPosition(position);
+      const word =  document.getText(document.getWordRangeAtPosition(position));
+      const txt =  document.getText();
+      const regexp = RegExp(`${word}`,'g');
+      let searced = [...txt.matchAll(regexp)];
+      const referRegex = new RegExp(`^\%${word}`);
+      for (var i = 0; i < searced.length; i++ ){
+        let x = document.positionAt(Number(searced[i].index));
+        const txtLine = document.lineAt(x.line).text;
+        console.log(`Test the txt with ${referRegex.test(txtLine)}`);
+        if (referRegex.test(txtLine) || /kernel_graph/.test(txtLine)) {
+          console.log("Creating the position");
+          lastPosition = new vscode.Location(vscode.Uri.file(document.fileName), x);
+        }
+        if (x.line !== position.line) {
+          //console.log(`Matchine at ${x}`);
+        } else {
+          console.log(`returned at ${lastPosition}`);
+          return lastPosition;
+        }
+      }
+    }
+
+    searchOperators(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
+      var lastPosition;
+      console.log("Start in saechOperator", position, token);
+      const word =  document.getText(document.getWordRangeAtPosition(position));
+      const txt =  document.getText();
+      const regexp = RegExp(`%${word}[\\(\\),]`,'g');
+      let searced = [...txt.matchAll(regexp)];
+      console.log("Got the word", word);
+      const referRegex = new RegExp(`\%${word}\\(`);
+      for (var i = 0; i < searced.length; i++ ){
+        let x = document.positionAt(Number(searced[i].index));
+        const txtLine = document.lineAt(x.line).text;
+        console.log(`Test the txt with ${referRegex.test(txtLine)}`);
+        if (referRegex.test(txtLine)) {
+          console.log("Creating the position");
+          lastPosition = new vscode.Location(vscode.Uri.file(document.fileName), x);
+        }
+        if (x.line !== position.line) {
+          //console.log(`Matchine at ${x}`);
+        } else {
+          console.log(`returned at ${lastPosition}`);
+          return lastPosition;
+        }
+      }
+    }
+
     public provideDefinition(
         document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) 
         {
+        var lastPosition;
         console.log(position, token);
+        var range = document.getWordRangeAtPosition(position);
         const word =  document.getText(document.getWordRangeAtPosition(position));
         const txt =  document.getText();
         console.log("Get word", word);
-        console.log('test:', /para\d+/.test(word));
+        if (!this.needToSeach(document, position, token)) {
+          return;
+        }
         var regexp;
         // para13
         if (/para\d+/.test(word)) {
-          regexp = RegExp(`${word}`,'g');
+          console.log("Search params");
+          return this.searchParameters(document, position, token);
         } else if (/\d+/.test(word)) {
-          regexp = RegExp(`%${word}\\(`,'g');
-        }
-
-        if (regexp){
-          let searced = [...txt.matchAll(regexp)];
-          for (var i = 0; i < searced.length; i++ ){
-            console.log("matched 0", Number(searced[i].index));
-            let x = document.positionAt(Number(searced[i].index));
-            console.log(`Matching the word ${regexp}, find position is ${x.line}`);
-            if (x.line !== position.line) {
-              console.log(`Matchine at ${x}`);
-              return new vscode.Location(vscode.Uri.file(document.fileName), x);
-            }
-          }
+          console.log("Search operators");
+          return this.searchOperators(document, position, token);
         }
     }
 }
