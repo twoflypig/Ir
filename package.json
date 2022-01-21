@@ -5,7 +5,7 @@
     "description": "IR files with color",
     "icon": "images/icon.png",
     "repository": "https://github.com/twoflypig/Ir",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "engines": {
         "vscode": "^0.10.0"
     },
@@ -18,7 +18,7 @@
         "languages": [{
             "id": "ir",
             "aliases": ["ir", "ir"],
-            "extensions": [".ir"],
+            "extensions": [".ir", ".dat"],
             "configuration": "./language-configuration.json"
         }],
         "grammars": [{
