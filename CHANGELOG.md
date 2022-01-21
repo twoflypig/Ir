@@ -1,9 +1,17 @@
 # Change Log
 
-All notable changes to the "ir" extension will be documented in this file.
+### 0.0.4
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+1. Support the jumping the code within the subkernel graph using %numbers(For example, %3) and parameters
 
-## [Unreleased]
+### 0.0.3
 
-- Initial release
+1. Support find the reference.
+
+### 0.0.2
+
+1. Support name jumping. Currently the parameters and the number.
+
+### 0.0.1
+
+1. Beta version with only key highlight features. More features are coming
