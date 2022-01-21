@@ -4,6 +4,7 @@
     "displayName": "IRColor",
     "description": "IR files with color",
     "icon": "images/icon.png",
+    "repository": "https://github.com/twoflypig/Ir",
     "version": "0.0.4",
     "engines": {
         "vscode": "^0.10.0"
