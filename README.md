@@ -20,9 +20,11 @@ You can refer to this [page](https://www.mindspore.cn/docs/programming_guide/zh-
 
 ![example](images/ircolor.gif)
 
-3.Support find reference of the operators, seached based on the number.
+3.Support find reference of the operators, seached based on the number and name.
 
 ![example](images/find_reference.gif)
+
+![example](images/find_reference_name.gif)
 
 4.Jump inner the graphs
 

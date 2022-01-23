@@ -106,11 +106,8 @@ class GoDefinitionProvider implements vscode.DefinitionProvider {
     public provideDefinition(
         document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) 
         {
-        var lastPosition;
         console.log(position, token);
-        var range = document.getWordRangeAtPosition(position);
         const word =  document.getText(document.getWordRangeAtPosition(position));
-        const txt =  document.getText();
         console.log("Get word", word);
         if (!this.needToSeach(document, position, token)) {
           return;
@@ -128,12 +125,16 @@ class GoDefinitionProvider implements vscode.DefinitionProvider {
 }
 
 class GoReferenceProvider implements vscode.ReferenceProvider {
+
+  regexEscape(inputs:String) {
+    return inputs.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  }
   public provideReferences(
       document: vscode.TextDocument, position: vscode.Position,
       options: { includeDeclaration: boolean }, token: vscode.CancellationToken) {
         var list = [];
         console.log("provied running:", position, token);
-        const word =  document.getText(document.getWordRangeAtPosition(position));
+        const word =  document.getText(document.getWordRangeAtPosition(position, ));
         const txt =  document.getText();
         console.log("Get word", word);
         var regexp;
@@ -143,20 +144,19 @@ class GoReferenceProvider implements vscode.ReferenceProvider {
           regexp = RegExp(`%${word}\\D`,'g');
         } else if (/\%\d+/.test(word)) {
           regexp = RegExp(`%${word}\\D`,'g');
+        } else {
+          regexp = RegExp(`${word}\\(`, 'g');
         }
         if (regexp) {
           let searced = [...txt.matchAll(regexp)];
           for (var i = 0; i < searced.length; i++ ){
-            console.log("matched 0", Number(searced[i].index));
             let x = document.positionAt(Number(searced[i].index));
-            console.log(`Matching the word ${regexp}, find position is ${x.line}`);
             if (x.line !== position.line) {
               console.log(`Matchine at ${x}`);
               list.push(new vscode.Location(vscode.Uri.file(document.fileName), x));
             }
           }
         }
-        console.log("Returned", list);
         return list;
   }
 }
