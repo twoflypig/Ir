@@ -1,7 +1,46 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+import { StreamPriorityOptions } from 'http2';
+import { listenerCount } from 'process';
 import * as vscode from 'vscode';
 import { workspace, languages, window, commands, ExtensionContext, Disposable } from 'vscode';
+
+
+class DifinitionFinder
+{
+    fuzyString = "";
+    referString = "";
+
+    constructor(fuzyString:string, referString:string) {
+      this.fuzyString = fuzyString;
+      this.referString = referString;
+    }
+    /*
+     *
+     * definitionFind
+     */
+    public definitionFind(word:string, txt:string, document:vscode.TextDocument, position:vscode.Position) {
+      var lastPosition;
+      const regexp = RegExp(this.fuzyString,'g');
+      let searced = [...txt.matchAll(regexp)];
+      const referRegex = new RegExp(this.referString);
+      for (var i = 0; i < searced.length; i++ ){
+        let x = document.positionAt(Number(searced[i].index));
+        const txtLine = document.lineAt(x.line).text;
+        if (referRegex.test(txtLine)) {
+          lastPosition = new vscode.Location(vscode.Uri.file(document.fileName), x);
+        }
+        if (x.line !== position.line) {
+          //console.log(`Matchine at ${x}`);
+        } else {
+          return lastPosition;
+        }
+      }
+      if (lastPosition) {
+        return lastPosition;
+      }
+    }
+}
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -44,63 +83,11 @@ class GoDefinitionProvider implements vscode.DefinitionProvider {
       // if the user click the %93 = xxx, so no need to search again
       const curTxt = document.lineAt(position.line).text;
       const word =  document.getText(document.getWordRangeAtPosition(position));
-      const referRegex = new RegExp(`\%${word}\\(`);
+      const referRegex = new RegExp(`\%${word}\\(\S`);
       if (referRegex.test(curTxt)) {
         return false;
       }
       return true;
-    }
-
-    searchParameters(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
-      var lastPosition;
-      console.log(position, token);
-      var range = document.getWordRangeAtPosition(position);
-      const word =  document.getText(document.getWordRangeAtPosition(position));
-      const txt =  document.getText();
-      const regexp = RegExp(`${word}`,'g');
-      let searced = [...txt.matchAll(regexp)];
-      const referRegex = new RegExp(`^\%${word}`);
-      for (var i = 0; i < searced.length; i++ ){
-        let x = document.positionAt(Number(searced[i].index));
-        const txtLine = document.lineAt(x.line).text;
-        console.log(`Test the txt with ${referRegex.test(txtLine)}`);
-        if (referRegex.test(txtLine) || /kernel_graph/.test(txtLine)) {
-          console.log("Creating the position");
-          lastPosition = new vscode.Location(vscode.Uri.file(document.fileName), x);
-        }
-        if (x.line !== position.line) {
-          //console.log(`Matchine at ${x}`);
-        } else {
-          console.log(`returned at ${lastPosition}`);
-          return lastPosition;
-        }
-      }
-    }
-
-    searchOperators(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
-      var lastPosition;
-      console.log("Start in saechOperator", position, token);
-      const word =  document.getText(document.getWordRangeAtPosition(position));
-      const txt =  document.getText();
-      const regexp = RegExp(`%${word}[\\(\\),]`,'g');
-      let searced = [...txt.matchAll(regexp)];
-      console.log("Got the word", word);
-      const referRegex = new RegExp(`\%${word}\\(`);
-      for (var i = 0; i < searced.length; i++ ){
-        let x = document.positionAt(Number(searced[i].index));
-        const txtLine = document.lineAt(x.line).text;
-        console.log(`Test the txt with ${referRegex.test(txtLine)}`);
-        if (referRegex.test(txtLine)) {
-          console.log("Creating the position");
-          lastPosition = new vscode.Location(vscode.Uri.file(document.fileName), x);
-        }
-        if (x.line !== position.line) {
-          //console.log(`Matchine at ${x}`);
-        } else {
-          console.log(`returned at ${lastPosition}`);
-          return lastPosition;
-        }
-      }
     }
 
     public provideDefinition(
@@ -108,27 +95,41 @@ class GoDefinitionProvider implements vscode.DefinitionProvider {
         {
         console.log(position, token);
         const word =  document.getText(document.getWordRangeAtPosition(position));
+        const txt =  document.getText();
         console.log("Get word", word);
         if (!this.needToSeach(document, position, token)) {
+          console.log("The word", word, " do not need to search");
           return;
         }
-        var regexp;
         // para13
         if (/para\d+/.test(word)) {
           console.log("Search params");
-          return this.searchParameters(document, position, token);
+          const finder = new DifinitionFinder(`${word}`, `^\%${word}`);
+          const res = finder.definitionFind(word, txt, document, position);
+          return res;
         } else if (/\d+/.test(word)) {
+          console.log("Search operators such as %3 = ");
+          const finder2 = new DifinitionFinder(`%${word} [=:\\(]`, `%${word} [=:]`);
+          const res2 = finder2.definitionFind(word, txt, document, position);
+          if (res2){
+            
+            return res2;
+          }
+          console.log("Return the searched results：", res2);
+
           console.log("Search operators");
-          return this.searchOperators(document, position, token);
+          const finder = new DifinitionFinder(`%${word}[\\(\\),]`, `\%${word}\\(`);
+          const res = finder.definitionFind(word, txt, document, position);
+          if (res) {
+            return res;
+          }
+
         }
     }
 }
 
 class GoReferenceProvider implements vscode.ReferenceProvider {
 
-  regexEscape(inputs:String) {
-    return inputs.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-  }
   public provideReferences(
       document: vscode.TextDocument, position: vscode.Position,
       options: { includeDeclaration: boolean }, token: vscode.CancellationToken) {

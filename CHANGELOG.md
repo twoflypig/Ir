@@ -1,5 +1,9 @@
 # Change Log
 
+### 0.0.7
+
+1. Fix the jumping invalid for the %numbers in .dat files.
+
 ### 0.0.5
 
 1. Support .dat files
