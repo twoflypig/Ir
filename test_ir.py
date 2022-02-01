@@ -31,4 +31,4 @@ class Net(nn.Cell):
 context.set_context(save_graphs=True)
 net = Net()
 model = Model(net)
-model.predict(Tensor(np.ones((10, 10))))
+model.predict(Tensor(np.ones((10, 10), dtype=np.float32)))

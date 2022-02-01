@@ -1,10 +1,10 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { StreamPriorityOptions } from 'http2';
-import { listenerCount } from 'process';
+import { kill, listenerCount } from 'process';
 import * as vscode from 'vscode';
 import { workspace, languages, window, commands, ExtensionContext, Disposable } from 'vscode';
-
+let myStatusBarItem: vscode.StatusBarItem;
 
 class DifinitionFinder
 {
@@ -47,7 +47,6 @@ class DifinitionFinder
 export function activate(context: vscode.ExtensionContext) {
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "helloworld-sample" is now active!');
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
@@ -65,6 +64,40 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerDefinitionProvider(["ir"], new GoDefinitionProvider()));
   context.subscriptions.push(
     vscode.languages.registerReferenceProvider(["ir"], new GoReferenceProvider()));
+
+
+	// register a command that is invoked when the status bar
+	// item is selected
+	const myCommandId = 'sample.showSelectionCount';
+	context.subscriptions.push(vscode.commands.registerCommand(myCommandId, async () => {
+		const n = getUniqueOperators(vscode.window.activeTextEditor);
+    var log = "Stastics:\n";
+    for (var [key, value] of n) {
+      log += `-- ${key} : ${value}\n`;
+    }
+    const curPath = vscode.window.activeTextEditor?.document.uri.path;
+    vscode.window.activeTextEditor?.document.uri.with
+    let uri = vscode.Uri.parse('untitled:'+ curPath + 'mp');
+    const doc = await vscode.workspace.openTextDocument(uri);
+		var newDoc = vscode.window.showTextDocument(doc, {preview: false});
+    (await newDoc).edit(edit=> { 
+      edit.insert(new vscode.Position(0, 0), log)
+    });
+    
+	}));
+
+	// create a new status bar item that we can now manage
+	myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100000);
+	myStatusBarItem.command = myCommandId;
+	context.subscriptions.push(myStatusBarItem);
+
+	// register some listener that make sure the status bar 
+	// item always up-to-date
+	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem));
+	context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(updateStatusBarItem));
+
+	// update status bar item once at start
+	updateStatusBarItem();
     
 }
 
@@ -160,6 +193,56 @@ class GoReferenceProvider implements vscode.ReferenceProvider {
         }
         return list;
   }
+}
+
+
+function updateStatusBarItem(): void {
+	const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
+		myStatusBarItem.text = `$(megaphone) ${n[1]} kernel_graph(s) ${n[0]} operators(s)`;
+		myStatusBarItem.show();
+}
+
+function getNumberOfSelectedLines(editor: vscode.TextEditor | undefined): number[] {
+  const txt = editor?.document.getText();
+  var kernelGraphs = 0;
+  var operatiorNums = 0;
+  if (txt) {
+    // compute the total operators
+    const regex = new RegExp(`\=\\s\\w+`, 'g'); 
+    const res = [...txt.matchAll(regex)];
+    // compute the total kernel_graphs
+    const regex2 = new RegExp(`#Total subgraph : (\\d+)`, 'g'); 
+    const res2 = [...txt.matchAll(regex2)];
+    if (res){
+      operatiorNums = res.length;
+    }
+    if (res2) {
+      kernelGraphs = parseInt(res2[0][1]);
+    }
+    return [operatiorNums, kernelGraphs];
+  }
+  return [0, 0];
+}
+
+
+function getUniqueOperators(editor: vscode.TextEditor | undefined): Map<String, number> {
+  const txt = editor?.document.getText();
+  var map = new Map<String, number>();
+  if (txt) {
+    // compute the total operators
+    const regex = new RegExp(`\=\\s(\[A-Za-z]+)`, 'g'); 
+    const res = [...txt.matchAll(regex)];
+    for (var i = 0; i < res.length; i++ ){
+      const count = map.get(res[i][1]);
+      if (count){
+        map.set(res[i][1], count + 1);
+      } else {
+        map.set(res[i][1], 1);
+      }
+     
+    }
+  }
+  return map;
 }
 
 
