@@ -12,6 +12,10 @@ You can refer to this [page](https://www.mindspore.cn/docs/programming_guide/zh-
 
 ## Features
 
+0.Add the Counts of the operators and the kernel graphs in vscode's status bar!
+
+![example](images/count_operators.gif)
+
 1.Highlight the operator, scope name, shape and some key variables of the IR files. See below:
 
 ![example](images/highlight_feature.png)
@@ -40,7 +44,8 @@ None
 
 ## Known Issues
 
-2. The parameters search only will find the begging ir as parameters.
+3. *.dat files is not well tested and supported. So some features may not work on the dat files.
+2. The parameters search only view the begging of the ir files as parameters.
 1. Currently the extesion is tested on the hwopt_end*.ir, if you meet any issues please let me know. Any questions and contributions are welcomed!
 
 ## Release Notes

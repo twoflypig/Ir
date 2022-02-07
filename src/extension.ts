@@ -70,10 +70,11 @@ export function activate(context: vscode.ExtensionContext) {
 	// item is selected
 	const myCommandId = 'sample.showSelectionCount';
 	context.subscriptions.push(vscode.commands.registerCommand(myCommandId, async () => {
-		const n = getUniqueOperators(vscode.window.activeTextEditor);
-    var log = "Stastics:\n";
-    for (var [key, value] of n) {
-      log += `-- ${key} : ${value}\n`;
+		const map = getUniqueOperators(vscode.window.activeTextEditor);
+    let keys = Array.from(map).sort(function (a, b){return b[1] - a[1]});
+    var log = "Opeator\tCounts\n";
+    for (var i=0; i < keys.length; i++) {
+      log += `${keys[i][0]}\t${keys[i][1]}\n`;
     }
     const curPath = vscode.window.activeTextEditor?.document.uri.path;
     vscode.window.activeTextEditor?.document.uri.with
@@ -198,8 +199,20 @@ class GoReferenceProvider implements vscode.ReferenceProvider {
 
 function updateStatusBarItem(): void {
 	const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
-		myStatusBarItem.text = `$(megaphone) ${n[1]} kernel_graph(s) ${n[0]} operators(s)`;
-		myStatusBarItem.show();
+  var message = "$(megaphone) ";
+  if (n[1] !== 0) {
+    message +=  `${n[1]} kernel_graph(s) `;
+  } 
+  if (n[0] !==0){
+    message +=  `${n[0]} operators(s)`;
+  }
+  myStatusBarItem.text = message;
+  if (n[0]+n[1]  > 0){
+    myStatusBarItem.show();
+  } else {
+    myStatusBarItem.hide();
+  }
+	
 }
 
 function getNumberOfSelectedLines(editor: vscode.TextEditor | undefined): number[] {
@@ -208,11 +221,12 @@ function getNumberOfSelectedLines(editor: vscode.TextEditor | undefined): number
   var operatiorNums = 0;
   if (txt) {
     // compute the total operators
-    const regex = new RegExp(`\=\\s\\w+`, 'g'); 
+    const regex = new RegExp(`\=\\s(\[A-Za-z]+)`, 'g'); 
     const res = [...txt.matchAll(regex)];
     // compute the total kernel_graphs
     const regex2 = new RegExp(`#Total subgraph : (\\d+)`, 'g'); 
     const res2 = [...txt.matchAll(regex2)];
+    console.log("res:", res.length);
     if (res){
       operatiorNums = res.length;
     }

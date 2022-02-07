@@ -1,5 +1,9 @@
 # Change Log
 
+### 0.0.8
+
+1. Support to count the operators and kernel graphs in the IR files. Note: *This feature is tested on 12_validate\*.ir and hwopd_endx\*.ir*
+
 ### 0.0.7
 
 1. Fix the jumping invalid for the %numbers in .dat files.
