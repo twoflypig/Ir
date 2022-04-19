@@ -10,6 +10,11 @@ PS:这个项目非官方项目~
 
 可以参考这个链接[page](https://www.mindspore.cn/docs/programming_guide/zh-CN/r1.5/read_ir_files.html)
 
+
+## 如何贡献
+
+请参考此处的文档[document](./how_to_contribute.md).
+
 ## 目前的特性
 
 1.在vscode的状态栏中增加操作算子的个数统计和子图数量的统计。

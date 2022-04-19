@@ -12,6 +12,10 @@ MindSpore is a deep learning framework like TensorFlow and Pytorch. It's under a
 
 You can refer to this [page](https://www.mindspore.cn/docs/programming_guide/zh-CN/r1.5/read_ir_files.html)
 
+## How to Contribute
+
+Please see this [document](./how_to_contribute.md).
+
 ## Features
 
 0.Add the Counts of the operators and the kernel graphs in vscode's status bar!
