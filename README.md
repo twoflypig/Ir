@@ -14,7 +14,7 @@ You can refer to this [page](https://www.mindspore.cn/docs/programming_guide/zh-
 
 ## How to Contribute
 
-Please see this [document](./how_to_contribute.md).
+Please see this [document](./CONTRIBUTING.md).
 
 ## Features
 
