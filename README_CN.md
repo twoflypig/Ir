@@ -13,7 +13,7 @@ PS:这个项目非官方项目~
 
 ## 如何贡献
 
-请参考此处的文档[document](./how_to_contribute.md).
+请参考此处的文档[document](./CONTRIBUTING.md).
 
 ## 目前的特性
 
